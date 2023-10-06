@@ -14,8 +14,7 @@
           <ng-container *ngFor="let q of answer.q; let j = index">
             <td>
               <input type="number" class="form-control q-input"
-                [min]="0" [max]="2" [(ngModel)]="answer.q[j]" 
-                (keyup)="onInputKeyUp($event, i, j)">
+                [min]="0" [max]="2" [(ngModel)]="answer.q[j]" (ngModelChange)="checkValue(answer.q[j])">
             </td>
           </ng-container>
         </tr>
