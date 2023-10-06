@@ -1,0 +1,62 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .center-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .input-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0; /* Add vertical spacing between rows */
+  }
+  
+  .input-box {
+    width: calc(33.33% - 20px);
+    padding: 15px; /* Increase padding for a more attractive look */
+    margin: 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Add rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+    transition: transform 0.2s ease-in-out; /* Add hover effect */
+  }
+  
+  .input-box:hover {
+    transform: translateY(-2px); /* Move the box slightly up on hover */
+  }
+  .next-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .next-button:hover {
+    background-color: #0056b3;
+  }
+  /* styles.css */
+
+/* Style for the input boxes */
+.input-box {
+  width: 100%;
+  margin-bottom: 10px; /* Add spacing between input boxes */
+}
+
+/* Style for the select element */
+.form-control.select-box {
+  width: 100%;
+  margin-bottom: 10px; /* Add spacing between select boxes */
+}

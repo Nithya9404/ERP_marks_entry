@@ -1,0 +1,33 @@
+<div class="container mt-4" id="page-container">
+  <div class="page-content">
+    <h1 class="text" style="align-items: center;">Part A</h1>
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="q-text">Register number</th>
+          <th class="q-text" *ngFor="let q of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">Q{{ q }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let answer of questionAnswers; let i = index">
+          <td class="q-text">{{ answer.register }}</td>
+          <ng-container *ngFor="let q of answer.q; let j = index">
+            <td>
+              <input type="number" class="form-control q-input"
+                [min]="0" [max]="2" [(ngModel)]="answer.q[j]" 
+                (keyup)="onInputKeyUp($event, i, j)">
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Add vertical space -->
+    <div class="mt-3"></div>
+
+    <!-- Move the button to the right end -->
+    <div class="d-flex justify-content-end">
+      <button mat-raised-button color="primary" class="mat-button" (click)="redirectToQuestionPartB()">Next</button>
+    </div>
+  </div>
+</div>

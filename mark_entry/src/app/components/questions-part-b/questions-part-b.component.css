@@ -1,0 +1,33 @@
+/* Style for the Q1, Q2, ... text */
+.q-text {
+    font-weight: bold;
+    font-size: 18px;
+    margin: 0;
+}
+
+/* Style for the input box */
+/* Add space after the input box */
+.q-input {
+    width: 50px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px; /* Adjust this margin as needed to control the space */
+}
+#part-a-container {
+    display: flex;
+    align-items: center;
+    min-height: 100vh; /* Ensure it takes up at least the full viewport height */
+}
+/* Custom button styles */
+.mat-button {
+    background-color: #007bff; /* Change to your desired background color */
+    color: #fff; /* Change to your desired text color */
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    /* Add a hover effect */
+    &:hover {
+        background-color: #0056b3; /* Change to your desired hover background color */
+    }
+}
+

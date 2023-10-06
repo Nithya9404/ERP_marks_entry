@@ -1,0 +1,18 @@
+<div class="black-bar left-bar"></div>
+<div class="black-bar top-bar"></div>
+<div class="login-page">
+  <div class="login-container">
+    <h2>Login</h2>
+    <form (ngSubmit)="login()">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" [(ngModel)]="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" [(ngModel)]="password" required>
+      </div>
+      <button type="submit" mat-button class="login-button">Login</button>
+    </form>
+  </div>
+</div>

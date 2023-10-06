@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="center-container">
+    <div class="input-row" *ngFor="let row of inputRows">
+      <ng-container *ngFor="let input of row">
+        <div class="form-group">
+          <label for="input">{{ input.placeholder }}</label>
+          <ng-container *ngIf="input.placeholder === 'Course Code' || input.placeholder === 'Course title'; else inputField">
+            <select class="form-control input-box" style="width: 100%; margin-bottom: 10px;"> <!-- Add margin-bottom -->
+              <option value="option1">Option 1</option>
+              <option value="option2">Option 2</option>
+              <option value="option3">Option 3</option>
+              <!-- Add more options as needed -->
+            </select>
+          </ng-container>
+          <ng-template #inputField>
+            <input class="form-control input-box" [placeholder]="input.placeholder" style="width: 80%; margin-bottom: 10px;"> <!-- Add margin-bottom -->
+          </ng-template>
+        </div>
+      </ng-container>
+    </div>
+    <button class="next-button" (click)="redirectToQuestionPartA()">Next</button>
+  </div>
+</div>
+  
