@@ -42,22 +42,6 @@ export class QuestionsPartAComponent {
       }
     );
   }
-
-  onInputKeyUp(event: any, rowIndex: number, colIndex: number) {
-    const inputValue = event.target.value;
-    const maxAllowedValue = 2;
-  
-    // Check if the input value is greater than the maximum allowed value
-    if (inputValue > maxAllowedValue) {
-      // Set the input value to the maximum allowed value
-      event.target.value = maxAllowedValue;
-  
-      // Show an alert message
-      alert('Mark should be less than 2');
-  
-      // Update the model value (questionAnswers array)
-      this.questionAnswers[rowIndex].q[colIndex] = maxAllowedValue;
-    }
-  }
+}
   
 }
