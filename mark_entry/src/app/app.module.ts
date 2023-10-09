@@ -10,7 +10,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './components/home/home.component';
 import { QuestionsPartAComponent } from './components/questions-part-a/questions-part-a.component';
 import { QuestionsPartBComponent } from './components/questions-part-b/questions-part-b.component';
-
+import { ReactiveFormsModule } from '@angular/forms';
+import { QuestionInputComponent } from './components/question-input/question-input.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { QuestionsPartBComponent } from './components/questions-part-b/questions
     LoginComponent,
     HomeComponent,
     QuestionsPartAComponent,
-    QuestionsPartBComponent
+    QuestionsPartBComponent,
+    QuestionInputComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +28,8 @@ import { QuestionsPartBComponent } from './components/questions-part-b/questions
     FormsModule,
     BrowserAnimationsModule,
     MatButtonModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

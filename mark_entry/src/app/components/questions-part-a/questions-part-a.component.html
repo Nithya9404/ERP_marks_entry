@@ -11,12 +11,9 @@
       <tbody>
         <tr *ngFor="let answer of questionAnswers; let i = index">
           <td class="q-text">{{ answer.register }}</td>
-          <ng-container *ngFor="let q of answer.q; let j = index">
-            <td>
-              <input type="number" class="form-control q-input"
-                [min]="0" [max]="2" [(ngModel)]="answer.q[j]" (ngModelChange)="checkValue(answer.q[j])">
-            </td>
-          </ng-container>
+          <td *ngFor="let qValue of answer.q; let j = index">
+            <app-question-input [initialValue]="answer.q[j]"></app-question-input>
+          </td>
         </tr>
       </tbody>
     </table>

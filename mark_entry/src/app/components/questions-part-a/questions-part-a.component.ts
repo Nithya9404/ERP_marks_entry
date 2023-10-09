@@ -13,14 +13,40 @@ export class QuestionsPartAComponent {
   constructor(private router: Router, private http: HttpClient) {
     // Initialize the questionAnswers array with empty objects
     for (let i = 0; i < 10; i++) {
-      this.questionAnswers.push({ register: `R${i + 1}`, marks: 0, q: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] });
+      this.questionAnswers.push({ register: `R${i + 1}`, marks: 0, q: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0].map(() => 0) });
     }
   }
+  
 
   checkValue(value: number) {
     if (value > 2) {
       alert('Mark should be less than 2');
     }
+  }
+
+  moveToNextCell(rowIndex: number, colIndex: number) {
+    const nextRowIndex = rowIndex;
+    const nextColIndex = colIndex + 1;
+
+    if (nextColIndex < this.questionAnswers[nextRowIndex].q.length) {
+      const inputElement = this.getCellElement(nextRowIndex, nextColIndex);
+      if (inputElement) {
+        inputElement.focus();
+      }
+    }
+  }
+
+  getCellElement(rowIndex: number, colIndex: number): HTMLElement | null {
+    const table = document.querySelector('table');
+    if (!table) return null;
+
+    const rows = table.querySelectorAll('tr');
+    if (rows.length <= rowIndex) return null;
+
+    const cells = rows[rowIndex].querySelectorAll('td');
+    if (cells.length <= colIndex) return null;
+
+    return cells[colIndex].querySelector('input');
   }
 
   redirectToQuestionPartB() {
@@ -43,3 +69,4 @@ export class QuestionsPartAComponent {
     );
   }
 }
+ 
