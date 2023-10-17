@@ -4,13 +4,15 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { QuestionsPartAComponent } from './components/questions-part-a/questions-part-a.component';
 import { QuestionsPartBComponent } from './components/questions-part-b/questions-part-b.component';
+import { QuestionTypeComponent } from './components/question-type/question-type.component';
 
 const routes: Routes = [
   {path: '',redirectTo: '/login', pathMatch: 'full'},
   {path: 'login',component: LoginComponent},
   {path: 'input', component: HomeComponent},
   {path: 'questions_part_A', component:QuestionsPartAComponent},
-  {path: 'questions_part_B', component:QuestionsPartBComponent}
+  {path: 'questions_part_B', component:QuestionsPartBComponent},
+  {path: 'question_type',component:QuestionTypeComponent}
 ];
 
 @NgModule({

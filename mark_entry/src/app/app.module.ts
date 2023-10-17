@@ -11,7 +11,7 @@ import { HomeComponent } from './components/home/home.component';
 import { QuestionsPartAComponent } from './components/questions-part-a/questions-part-a.component';
 import { QuestionsPartBComponent } from './components/questions-part-b/questions-part-b.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { QuestionInputComponent } from './components/question-input/question-input.component';
+import { QuestionTypeComponent } from './components/question-type/question-type.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +20,7 @@ import { QuestionInputComponent } from './components/question-input/question-inp
     HomeComponent,
     QuestionsPartAComponent,
     QuestionsPartBComponent,
-    QuestionInputComponent
+    QuestionTypeComponent
   ],
   imports: [
     BrowserModule,

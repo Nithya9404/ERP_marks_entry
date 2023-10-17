@@ -1,0 +1,6 @@
+<div class="select-container">
+<select>
+    <option value="">Select the assessment</option>
+    <option *ngFor="let option of dropdownData"[value]="option.id">{{ option.assessment_name }}</option>
+</select>
+</div>

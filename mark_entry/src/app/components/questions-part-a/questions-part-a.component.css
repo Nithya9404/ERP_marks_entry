@@ -25,3 +25,9 @@
     }
 }
 
+.active-cell {
+    background-color: #fff; 
+    cursor: pointer;
+  }
+  
+

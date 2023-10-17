@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  redirectToQuestionPartA(){
-    this.router.navigate(['/questions_part_A']);
+  redirectToQuestiontype(){
+    this.router.navigate(['/question_type']);
   }
 }
