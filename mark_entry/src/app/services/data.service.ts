@@ -9,6 +9,6 @@ export class DataService {
   constructor(private http:HttpClient) { }
 
   getDropDowndata(){
-    return this.http.get('http://localhost:3000/dropdown-data');
+    return this.http.get('http://localhost:3002/dropdown-data');
   }
 }
