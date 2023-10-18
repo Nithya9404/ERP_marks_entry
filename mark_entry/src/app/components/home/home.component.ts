@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
     const placeholders = [
       'Department',
       'Batch',
-      'Year',
+      'Semester',
       'Faculty Id',
       'Course Code',
       'Course title',
