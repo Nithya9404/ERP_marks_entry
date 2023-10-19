@@ -8,8 +8,17 @@
           <input class="form-control input-box" style="width: 60%; margin-right: 10px;" disabled>
         </ng-container>
         <ng-container *ngIf="input.placeholder === 'Batch'">
-          <!-- Input box for Batch (populated from batch) -->
-          <input class="form-control input-box" [value]="batch" disabled>
+          <!-- Check if all batches are equal to decide how to display the input -->
+          <ng-container *ngIf="allBatchesEqual; else batchDropdown">
+            <!-- Input box for Batch (populated from batch) -->
+            <input class="form-control input-box" [value]="batch" disabled>
+          </ng-container>
+          <ng-template #batchDropdown>
+            <!-- Select box for Batch (populated with unique values) -->
+            <select class="form-control input-box select-box" style="width: 60%; margin-right: 10px;">
+              <option *ngFor="let batchValue of getUniqueBatches()" [value]="batchValue">{{ batchValue }}</option>
+            </select>
+          </ng-template>
         </ng-container>
         <ng-container *ngIf="input.placeholder === 'Semester'">
           <!-- Input box for Semester (left empty) -->

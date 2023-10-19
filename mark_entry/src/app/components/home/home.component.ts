@@ -11,10 +11,11 @@ import { AuthService } from 'src/app/services/auth.service';
 export class HomeComponent implements OnInit {
   inputRows: { placeholder: string }[][] = [];
   facultyId: string | null = null;
-  batch: string='';
+  batch: string | null = null; // Explicitly typed as string or null
   courseCodes: string[] = [];
+  allBatchesEqual: boolean = false;
 
-  constructor(private router: Router, private dataService: DataService,private authService: AuthService) {}
+  constructor(private router: Router, private dataService: DataService, private authService: AuthService) {}
 
   ngOnInit(): void {
     const placeholders = [
@@ -35,26 +36,41 @@ export class HomeComponent implements OnInit {
       for (let j = 0; j < inputsPerRow; j++) {
         const inputIndex = i * inputsPerRow + j;
         if (inputIndex < totalInputs) {
-          row.push({ placeholder: placeholders[inputIndex] }); 
+          row.push({ placeholder: placeholders[inputIndex] });
         }
       }
       this.inputRows.push(row);
     }
-    
-    this.facultyId = this.authService.getFacultyId();
-    console.log('Id',this.facultyId);
 
-    // Check if facultyId is available before making the request
+    this.facultyId = this.authService.getFacultyId();
+    console.log('Id', this.facultyId);
+
     if (this.facultyId) {
       this.dataService.getFacultyData(this.facultyId).subscribe((data: any) => {
-        this.batch = data.batch;
         this.courseCodes = data.courseCodes;
         
-        console.log('Batch:',this.batch);
-        console.log('Course codes: ',this.courseCodes);
+        const batches = data.batch;
+        this.allBatchesEqual = batches.every((batch: any) => batch === batches[0]);
+        
+        if (this.allBatchesEqual) {
+          this.batch = batches[0] || ''; // Use an empty string if 'batches[0]' is null
+        } else {
+          this.batch = '';
+        }
+        
+        console.log('Batch:', this.batch);
+        console.log('Course codes: ', this.courseCodes);
       });
     }
   }
+  getUniqueBatches(): string[] {
+    // Ensure that batch is not null before proceeding
+    if (this.batch) {
+      return Array.from(new Set(this.batch.split(',')));
+    }
+    return [];
+  }
+
 
   redirectToQuestiontype() {
     this.router.navigate(['/question_type']);
