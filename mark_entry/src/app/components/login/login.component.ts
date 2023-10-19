@@ -1,5 +1,6 @@
+// login.component.ts
 import { Component } from '@angular/core';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -11,7 +12,8 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
 
-  constructor(private router:Router,private authService:AuthService) {}
+  constructor(private router: Router, private authService: AuthService) {}
+
   login (){
     this.authService.authenticate(this.username,this.password).subscribe(
        (response) => {
@@ -28,5 +30,4 @@ export class LoginComponent {
        }
     );
   }
-
 }
