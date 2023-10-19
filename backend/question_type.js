@@ -52,7 +52,7 @@ app.post('/authenticate', (req, res) => {
 app.get('/getCourseCodes/:facultyId', (req, res) => {
   const requestedFacultyId = req.params.facultyId;
   const query = {
-    text: 'SELECT batch_no, faculty_id1, course_code FROM course_allocation_faculty WHERE faculty_id1 = $1',
+    text: 'SELECT batch_no, faculty_id1, course_code,dept_code FROM course_allocation_faculty WHERE faculty_id1 = $1',
     values: [requestedFacultyId],
   };
   pool.query(query, (err, result) => {
@@ -63,12 +63,29 @@ app.get('/getCourseCodes/:facultyId', (req, res) => {
       const courseCodes = result.rows.map((row) => row.course_code);
       const batch = result.rows.map((row) => row.batch_no);
       const facultyId = result.rows.map((row) => row.faculty_id1);
-      res.json({ facultyId, batch, courseCodes });
+      const deptcode = result.rows.map((row) => row.dept_code);
+      res.json({ facultyId, batch, courseCodes,deptcode });
     }
   });
 });
 
-
+app.get('/department/:deptcode',(req,res) => {
+   const requestedDeptcode = req.params.deptcode;
+   const query ={
+    text: 'SELECT dept_name FROM department_master WHERE dept_code=$1',
+    values:[requestedDeptcode]
+   };
+   pool.query(query,(err,result)=>{
+      if(err){
+        console.error('Error executing SQL query:',err);
+        res.status(500).json({success: false,message:'Internal server error'});
+      }
+      else {
+      const department = result.rows[0] ? result.rows[0].dept_name : null;
+      res.json({ department });
+      }
+   });
+});
 
 app.listen(port,()=>{
     console.log(`Server is running on ${port}`)

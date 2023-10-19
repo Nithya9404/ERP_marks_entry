@@ -11,9 +11,11 @@ import { AuthService } from 'src/app/services/auth.service';
 export class HomeComponent implements OnInit {
   inputRows: { placeholder: string }[][] = [];
   facultyId: string | null = null;
-  batch: string | null = null; // Explicitly typed as string or null
+  batch: string | null = null; 
   courseCodes: string[] = [];
   allBatchesEqual: boolean = false;
+  deptcode: string | null = null;
+  department:string | null = null;
 
   constructor(private router: Router, private dataService: DataService, private authService: AuthService) {}
 
@@ -53,13 +55,19 @@ export class HomeComponent implements OnInit {
         this.allBatchesEqual = batches.every((batch: any) => batch === batches[0]);
         
         if (this.allBatchesEqual) {
-          this.batch = batches[0] || ''; // Use an empty string if 'batches[0]' is null
+          this.batch = batches[0] || '';  
         } else {
           this.batch = '';
         }
-        
         console.log('Batch:', this.batch);
         console.log('Course codes: ', this.courseCodes);
+        this.deptcode = data.deptcode;
+        if (this.deptcode) {
+          this.dataService.getDepartment(this.deptcode[0]).subscribe((departmentData: any) => {
+            this.department = departmentData.department;
+            console.log('Department: ',this.department);
+          });
+        }
       });
     }
   }

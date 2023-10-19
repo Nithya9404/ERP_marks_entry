@@ -5,7 +5,7 @@
         <label for="input">{{ input.placeholder }}</label>
         <ng-container *ngIf="input.placeholder === 'Department'">
           <!-- Input box for Department (left empty) -->
-          <input class="form-control input-box" style="width: 60%; margin-right: 10px;" disabled>
+          <input class="form-control input-box"  [value]="department" style="width: 60%; margin-right: 10px; word-wrap: break-word;" disabled>
         </ng-container>
         <ng-container *ngIf="input.placeholder === 'Batch'">
           <!-- Check if all batches are equal to decide how to display the input -->

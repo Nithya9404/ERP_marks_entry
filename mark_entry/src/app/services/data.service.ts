@@ -18,5 +18,9 @@ export class DataService {
     console.log('URL:', url);
     return this.http.get(url);
   }
-  
+  getDepartment(deptcode:string) {
+    const url = `http://localhost:3002/department/${deptcode}`;
+    console.log('Url: ',url);
+    return this.http.get(url);
+  }
 }
