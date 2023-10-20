@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   allBatchesEqual: boolean = false;
   deptcode: string | null = null;
   department:string | null = null;
+  course: string | null =null;
 
   constructor(private router: Router, private dataService: DataService, private authService: AuthService) {}
 
@@ -66,6 +67,12 @@ export class HomeComponent implements OnInit {
           this.dataService.getDepartment(this.deptcode[0]).subscribe((departmentData: any) => {
             this.department = departmentData.department;
             console.log('Department: ',this.department);
+          });
+        }
+        if(this.courseCodes){
+          this.dataService.getCourse(this.courseCodes).subscribe((courseData: any) => {
+              this.course=  courseData.course;
+              console.log('Course title: ',this.course);
           });
         }
       });

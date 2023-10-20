@@ -23,4 +23,9 @@ export class DataService {
     console.log('Url: ',url);
     return this.http.get(url);
   }
+  getCourse(courseCodes:string[]){
+    const url =`http://localhost:3002/course_title/${courseCodes}`;
+    console.log('url: ',url);
+    return this.http.get(url);
+  }
 }

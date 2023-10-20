@@ -36,7 +36,7 @@
         </ng-container>
         <ng-container *ngIf="input.placeholder === 'Course title'">
           <!-- Input box for Course Title (left empty) -->
-          <input class="form-control input-box" style="width: 60%; margin-right: 10px;" disabled>
+          <input class="form-control input-box" [value]="course" style="width: 60%; margin-right: 10px;" disabled>
         </ng-container>
       </div>
     </div>
