@@ -23,9 +23,11 @@ export class DataService {
     console.log('Url: ',url);
     return this.http.get(url);
   }
-  getCourse(courseCodes:string[]){
-    const url =`http://localhost:3002/course_title/${courseCodes}`;
-    console.log('url: ',url);
+  getCourse(courseCodes: string[]): Observable<any> {
+    const courseCodesParam = courseCodes.join(','); // Convert the array to a comma-separated string
+    const url = `http://localhost:3002/course_title/${courseCodesParam}`;
+    console.log('Url: ',url);
     return this.http.get(url);
   }
+  
 }
