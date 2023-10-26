@@ -38,5 +38,4 @@ export class DataService {
     const url = 'http://localhost:3000/api/insertData';
     return this.http.post(url, dataToInsert);
   }
-  
 }
