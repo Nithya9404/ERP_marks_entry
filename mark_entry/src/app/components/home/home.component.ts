@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataService } from 'src/app/services/data.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -16,8 +17,9 @@ export class HomeComponent implements OnInit {
   allBatchesEqual: boolean = false;
   deptcode: string | null = null;
   department:string | null = null;
-  course: string | null =null;
-
+  course: { course_title: string } = { course_title: '' };
+  selectedCourseCode: string[]=[];
+  
   constructor(private router: Router, private dataService: DataService, private authService: AuthService) {}
 
   ngOnInit(): void {
@@ -69,12 +71,13 @@ export class HomeComponent implements OnInit {
             console.log('Department: ',this.department);
           });
         }
-        if(this.courseCodes){
+        if (this.courseCodes) {
           this.dataService.getCourse(this.courseCodes).subscribe((courseData: any) => {
-              this.course=  courseData.course;
-              console.log('Course title: ',this.course);
+            console.log('API Response Data: ', courseData);
+            this.course = courseData[0];
+            console.log('Course title: ', this.course);
           });
-        }
+        }        
       });
     }
   }
@@ -86,7 +89,14 @@ export class HomeComponent implements OnInit {
     return [];
   }
 
-
+  onCourseCodeChange(courseCode: string) {
+    const courseCodes = [courseCode];
+    this.dataService.getCourse(courseCodes).subscribe((courseData: any[]) => {
+      this.course = courseData[0];
+      console.log('Course title: ', this.course);
+    });
+  }
+  
   redirectToQuestiontype() {
     this.router.navigate(['/question_type']);
   }

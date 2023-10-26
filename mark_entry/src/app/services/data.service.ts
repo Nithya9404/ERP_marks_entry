@@ -24,10 +24,16 @@ export class DataService {
     return this.http.get(url);
   }
   getCourse(courseCodes: string[]): Observable<any> {
+    if (courseCodes.length === 0) {
+      // Return an empty observable if there are no course codes
+      return of([]);
+    }
+  
     const courseCodesParam = courseCodes.join(','); // Convert the array to a comma-separated string
     const url = `http://localhost:3002/course_title/${courseCodesParam}`;
-    console.log('Url: ',url);
+    console.log('Url: ', url);
     return this.http.get(url);
   }
+  
   
 }

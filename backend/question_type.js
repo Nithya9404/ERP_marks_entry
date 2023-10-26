@@ -87,22 +87,21 @@ app.get('/department/:deptcode',(req,res) => {
    });
 });
 
-app.get('/course_title/:courseCodes',(req,res)=>{
-    const requestCourseTitle = req.params.courseCodes;
-    const query={
-      text:'SELECT course_title FROM course_master WHERE course_code=$1',
-      values:[requestCourseTitle]
-    };
-    pool.query(query,(error,results)=>{
-      if(error){
-        console.error('Error executing SQL query: ',error);
-        res.status(500).json({success:false,message:'Internal server error'});
-      }
-      else{
-        const course = results.rows.map((row) => row.course_title);
-        res.json({course});
-      }
-    })
+app.get('/course_title/:courseCodes', (req, res) => {
+  const requestCourseCodes = req.params.courseCodes.split(','); // Split course codes into an array
+  const query = {
+    text: 'SELECT course_title FROM course_master WHERE course_code = ANY($1)',
+    values: [requestCourseCodes],
+  };
+  pool.query(query, (error, results) => {
+    if (error) {
+      console.error('Error executing SQL query: ', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    } else {
+      const courseData = results.rows;
+      res.json(courseData);
+    }
+  });
 });
 
 app.listen(port,()=>{

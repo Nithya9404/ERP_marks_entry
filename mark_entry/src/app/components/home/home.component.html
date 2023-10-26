@@ -5,13 +5,13 @@
         <label for="input">{{ input.placeholder }}</label>
         <ng-container *ngIf="input.placeholder === 'Department'">
           <!-- Input box for Department (left empty) -->
-          <input class="form-control input-box"  [value]="department" style="width: 60%; margin-right: 10px; word-wrap: break-word;" disabled>
+          <input class="form-control input-box" [ngModel]="department" style="width: 60%; margin-right: 10px; word-wrap: break-word;" disabled>
         </ng-container>
         <ng-container *ngIf="input.placeholder === 'Batch'">
           <!-- Check if all batches are equal to decide how to display the input -->
           <ng-container *ngIf="allBatchesEqual; else batchDropdown">
             <!-- Input box for Batch (populated from batch) -->
-            <input class="form-control input-box" [value]="batch" disabled>
+            <input class="form-control input-box" [ngModel]="batch" disabled>
           </ng-container>
           <ng-template #batchDropdown>
             <!-- Select box for Batch (populated with unique values) -->
@@ -26,17 +26,18 @@
         </ng-container>
         <ng-container *ngIf="input.placeholder === 'Faculty Id'">
           <!-- Input box for Faculty Id (populated from facultyId) -->
-          <input class="form-control input-box" [value]="facultyId" disabled>
+          <input class="form-control input-box" [ngModel]="facultyId" disabled>
         </ng-container>
         <ng-container *ngIf="input.placeholder === 'Course Code'">
           <!-- Select box for Course Code (populated from courseCodes) -->
-          <select class="form-control input-box select-box" style="width: 60%; margin-right: 10px;">
+          <select class="form-control input-box select-box" style="width: 60%; margin-right: 10px" [(ngModel)]="selectedCourseCode" (ngModelChange)="onCourseCodeChange($event)">
             <option *ngFor="let code of courseCodes" [value]="code">{{ code }}</option>
           </select>
+                          
         </ng-container>
         <ng-container *ngIf="input.placeholder === 'Course title'">
-          <!-- Input box for Course Title (left empty) -->
-          <input class="form-control input-box" [value]="course" style="width: 60%; margin-right: 10px;" disabled>
+          <!-- Input box for Course Title (populated from course) -->
+          <input class="form-control input-box" [value]="course.course_title" style="width: 60%; margin-right: 10px;" disabled>
         </ng-container>
       </div>
     </div>
