@@ -19,6 +19,8 @@ export class HomeComponent implements OnInit {
   department:string | null = null;
   course: { course_title: string } = { course_title: '' };
   selectedCourseCode: string[]=[];
+  semester: string[]=['1','2','3','4','5','6','7','8'];
+  selectedSemester:string | null = null;
   
   constructor(private router: Router, private dataService: DataService, private authService: AuthService) {}
 
@@ -31,7 +33,6 @@ export class HomeComponent implements OnInit {
       'Course Code',
       'Course title',
     ];
-
     const totalInputs = placeholders.length;
     const inputsPerRow = 3;
     const rowCount = Math.ceil(totalInputs / inputsPerRow);
@@ -82,7 +83,6 @@ export class HomeComponent implements OnInit {
     }
   }
   getUniqueBatches(): string[] {
-    // Ensure that batch is not null before proceeding
     if (this.batch) {
       return Array.from(new Set(this.batch.split(',')));
     }

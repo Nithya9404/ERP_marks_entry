@@ -88,7 +88,7 @@ app.get('/department/:deptcode',(req,res) => {
 });
 
 app.get('/course_title/:courseCodes', (req, res) => {
-  const requestCourseCodes = req.params.courseCodes.split(','); // Split course codes into an array
+  const requestCourseCodes = req.params.courseCodes.split(','); 
   const query = {
     text: 'SELECT course_title FROM course_master WHERE course_code = ANY($1)',
     values: [requestCourseCodes],
