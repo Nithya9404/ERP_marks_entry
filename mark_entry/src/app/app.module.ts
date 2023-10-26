@@ -12,7 +12,6 @@ import { QuestionsPartAComponent } from './components/questions-part-a/questions
 import { QuestionsPartBComponent } from './components/questions-part-b/questions-part-b.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { QuestionTypeComponent } from './components/question-type/question-type.component';
-import { CoursedetailComponent } from './components/coursedetail/coursedetail.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +21,6 @@ import { CoursedetailComponent } from './components/coursedetail/coursedetail.co
     QuestionsPartAComponent,
     QuestionsPartBComponent,
     QuestionTypeComponent,
-    CoursedetailComponent
   ],
   imports: [
     BrowserModule,

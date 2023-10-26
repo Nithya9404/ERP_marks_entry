@@ -98,6 +98,17 @@ export class HomeComponent implements OnInit {
   }
   
   redirectToQuestiontype() {
-    this.router.navigate(['/question_type']);
+    const dataToInsert = {
+      column1: this.batch, 
+      column2: this.selectedSemester, 
+      column3: this.selectedCourseCode, 
+    };
+  
+    // Call the data service to insert the data into the database
+    this.dataService.insertData(dataToInsert).subscribe((response) => {
+      console.log('Data inserted successfully:', response);
+      this.router.navigate(['/questions_part_A']);
+    });
   }
+  
 }

@@ -41,7 +41,7 @@ app.post('/authenticate', (req, res) => {
       console.error('Error executing the SQL query: ', error);
       res.status(500).json({ success: false, message: 'Internal server error' });
     } else if (results.rows.length > 0) {
-      const facultyId = results.rows[0].faculty_id; // Retrieve faculty_id from the database
+      const facultyId = results.rows[0].faculty_id;
       res.json({ success: true, faculty_id: facultyId, message: 'Authentication successfull' });
       console.log('Faculty ID:', facultyId);
     } else {
