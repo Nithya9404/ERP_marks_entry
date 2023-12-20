@@ -1,22 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DataService } from 'src/app/services/data.service';
+import { RegisterService } from 'src/app/services/register.service';
 
 @Component({
   selector: 'app-questions-part-a',
   templateUrl: './questions-part-a.component.html',
   styleUrls: ['./questions-part-a.component.css']
 })
-export class QuestionsPartAComponent {
+export class QuestionsPartAComponent implements OnInit {
   questionAnswers: { register: string, marks: number, q: number[] }[] = [];
   activeCell: { i: number, j: number } | null = null;
   dataToInsert: any = {};
 
-  constructor(private router: Router, private http: HttpClient,private dataService: DataService) {
-    for (let i = 0; i < 10; i++) {
-      this.questionAnswers.push({ register: `R${i + 1}`, marks: 0, q: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] });
-    }
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private dataService: DataService,
+    private registerService: RegisterService
+  ) {}
+
+  ngOnInit() {
+    this.registerService.getRegisterNumbers().subscribe(
+      (registerNumbers: string[]) => {
+        for (let i = 0; i < registerNumbers.length; i++) {
+          this.questionAnswers.push({ register: registerNumbers[i], marks: 0, q: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] });
+        }
+      },
+      (error) => {
+        console.error('Error fetching register numbers:', error);
+      }
+    );
   }
 
   checkValue(value: number) {
@@ -47,5 +62,4 @@ export class QuestionsPartAComponent {
       }
     );
   }
-  }
-
+}
