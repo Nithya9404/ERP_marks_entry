@@ -6,6 +6,7 @@ import { Observable, catchError, of } from 'rxjs';
   providedIn: 'root'
 })
 export class DataService {
+  private baseUrl = 'http://localhost:3000/api';
 
   constructor(private http:HttpClient) { }
 
@@ -25,17 +26,16 @@ export class DataService {
   }
   getCourse(courseCodes: string[]): Observable<any> {
     if (courseCodes.length === 0) {
-      // Return an empty observable if there are no course codes
       return of([]);
     }
   
-    const courseCodesParam = courseCodes.join(','); // Convert the array to a comma-separated string
+    const courseCodesParam = courseCodes.join(','); 
     const url = `http://localhost:3002/course_title/${courseCodesParam}`;
     console.log('Url: ', url);
     return this.http.get(url);
   }
   insertData(dataToInsert: any) {
-    const url = 'http://localhost:3000/api/insertData';
+    const url = 'http://localhost:3002/api/insertData';
     return this.http.post(url, dataToInsert);
   }
 }
