@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { DataService } from 'src/app/services/data.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -18,9 +17,12 @@ export class HomeComponent implements OnInit {
   deptcode: string | null = null;
   department:string | null = null;
   course: { course_title: string } = { course_title: '' };
+  degreeCode: string | null = null; // Add degreeCode
   selectedCourseCode: string[]=[];
   semester: string[]=['1','2','3','4','5','6','7','8'];
   selectedSemester:string | null = null;
+  regulation:string | null=null;
+  
   
   constructor(private router: Router, private dataService: DataService, private authService: AuthService) {}
 
@@ -54,7 +56,10 @@ export class HomeComponent implements OnInit {
     if (this.facultyId) {
       this.dataService.getFacultyData(this.facultyId).subscribe((data: any) => {
         this.courseCodes = data.courseCodes;
-        
+        this.degreeCode = data.degreeCode;
+        this.regulation = data.regulation;
+        this.deptcode = data.dept_code;
+
         const batches = data.batch;
         this.allBatchesEqual = batches.every((batch: any) => batch === batches[0]);
         
@@ -101,7 +106,10 @@ export class HomeComponent implements OnInit {
     const dataToInsert = {
       column1: this.batch, 
       column2: this.selectedSemester, 
-      column3: this.selectedCourseCode, 
+      column3: this.selectedCourseCode,
+      column4: this.degreeCode,
+      column6: this.deptcode,
+      column7: this.regulation
     };
   
     // Call the data service to insert the data into the database
