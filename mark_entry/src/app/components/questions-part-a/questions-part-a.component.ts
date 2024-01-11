@@ -52,7 +52,7 @@ export class QuestionsPartAComponent implements OnInit {
     const postData = this.questionAnswers.map((item) => {
       return { q: item.q };
     });
-    this.http.post('http://localhost:3000/api/insert', postData).subscribe(
+    this.http.post('http://localhost:3002/api/insert', postData).subscribe(
       (response: any) => {
         console.log('Data inserted successfully', response);
         this.router.navigate(['/questions_part_B']);
