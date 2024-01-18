@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from 'src/app/services/data.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { SharedDataService } from 'src/app/services/shareddata.service';
 
 @Component({
   selector: 'app-home',
@@ -17,14 +18,21 @@ export class HomeComponent implements OnInit {
   deptcode: string | null = null;
   department:string | null = null;
   course: { course_title: string } = { course_title: '' };
-  degreeCode: string | null = null; // Add degreeCode
+  degreeCode: string | null = null;
   selectedCourseCode: string[]=[];
   semester: string[]=['1','2','3','4','5','6','7','8'];
   selectedSemester:string | null = null;
   regulation:string | null=null;
-  
-  
-  constructor(private router: Router, private dataService: DataService, private authService: AuthService) {}
+
+  // New properties to store data
+  homeData: any;
+
+  constructor(
+    private router: Router,
+    private dataService: DataService,
+    private authService: AuthService,
+    private sharedDataService: SharedDataService
+  ) {}
 
   ngOnInit(): void {
     const placeholders = [
@@ -51,7 +59,6 @@ export class HomeComponent implements OnInit {
     }
 
     this.facultyId = this.authService.getFacultyId();
-    console.log('Id', this.facultyId);
 
     if (this.facultyId) {
       this.dataService.getFacultyData(this.facultyId).subscribe((data: any) => {
@@ -62,31 +69,41 @@ export class HomeComponent implements OnInit {
 
         const batches = data.batch;
         this.allBatchesEqual = batches.every((batch: any) => batch === batches[0]);
-        
+
         if (this.allBatchesEqual) {
           this.batch = batches[0] || '';  
         } else {
           this.batch = '';
         }
-        console.log('Batch:', this.batch);
-        console.log('Course codes: ', this.courseCodes);
+
         this.deptcode = data.deptcode;
         if (this.deptcode) {
           this.dataService.getDepartment(this.deptcode[0]).subscribe((departmentData: any) => {
             this.department = departmentData.department;
-            console.log('Department: ',this.department);
           });
         }
+
         if (this.courseCodes) {
           this.dataService.getCourse(this.courseCodes).subscribe((courseData: any) => {
-            console.log('API Response Data: ', courseData);
             this.course = courseData[0];
-            console.log('Course title: ', this.course);
           });
-        }        
+        } 
+
+        // Set data in the shared service
+        this.homeData = {
+          batch: this.batch,
+          semester: this.selectedSemester,
+          courseCode: this.selectedCourseCode,
+          degreeCode: this.degreeCode,
+          deptcode: this.deptcode,
+          regulation: this.regulation
+        };
+
+        this.sharedDataService.setHomeComponentData(this.homeData);
       });
     }
   }
+
   getUniqueBatches(): string[] {
     if (this.batch) {
       return Array.from(new Set(this.batch.split(',')));
@@ -98,25 +115,10 @@ export class HomeComponent implements OnInit {
     const courseCodes = [courseCode];
     this.dataService.getCourse(courseCodes).subscribe((courseData: any[]) => {
       this.course = courseData[0];
-      console.log('Course title: ', this.course);
     });
   }
-  
+
   redirectToQuestiontype() {
-    const dataToInsert = {
-      column1: this.batch, 
-      column2: this.selectedSemester, 
-      column3: this.selectedCourseCode,
-      column4: this.degreeCode,
-      column6: this.deptcode,
-      column7: this.regulation
-    };
-  
-    // Call the data service to insert the data into the database
-    this.dataService.insertData(dataToInsert).subscribe((response) => {
-      console.log('Data inserted successfully:', response);
-      this.router.navigate(['/questions_part_A']);
-    });
+    this.router.navigate(['/questions_part_A']);
   }
-  
 }
