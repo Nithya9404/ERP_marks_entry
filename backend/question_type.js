@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const pg = require('pg');
-const bodyparser = require('body-parser')
+const bodyparser = require('body-parser');
+const format = require('pg-format');
+
 
 const app = express();
 const port = 3002;
@@ -131,60 +133,77 @@ app.get('/api/registerNumbers', async (req, res) => {
   }
 });
 
-app.post('/api/insert', async (req, res) => {
+app.post('/api/insertCombined', async (req, res) => {
+  const client = await pool.connect();
   try {
-    // Insert data into the 'partb' table
+    await client.query('BEGIN');
+
     const data = req.body;
-    const formattedData = data.map((item) => item.q);
+    const commonValues = [
+      data.homeData.batch,
+      data.homeData.semester,
+      data.homeData.courseCode[0],
+      data.homeData.degreeCode[0],
+      data.homeData.deptcode[0].trim(),
+      data.homeData.regulation[0].trim()
+    ];
 
-    const query = format(
-      'INSERT INTO question_pattern_1 (q1, q2, q3, q4, q5, q6, q7, q8, q9, q10) VALUES %L',
-      formattedData
-    );
+    // Insert Part A and Part B data
+const partAData = Array.isArray(data.questionsPartAData.questionAnswers) ? data.questionsPartAData.questionAnswers : [];
+const partBData = Array.isArray(data.partBData) ? data.partBData : [];
 
-    await pool.query(query);
-    console.log('Data inserted successfully into partb table');
-    res.status(200).json({ message: 'Data inserted successfully' });
-  } catch (error) {
-    console.error('Error inserting data into partb table:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+const combinedData = partAData.map((itemA, index) => {
+  const itemB = partBData[index] || { q: [] };
+  const partAValues = [...commonValues, ...itemA.q];
+  const partBValues = itemB.q.map(value => (value === undefined || value === null ? null : Number(value))); // Convert to number
+  return [...partAValues, ...partBValues];
 });
 
-app.post('/api/insertData', async (req, res) => {
+const formattedInsertQueries = combinedData.map(item => {
+  const formattedValues = item.map(innerItem => {
+    return innerItem === undefined || innerItem === null ? 'NULL' : typeof innerItem === 'string' ? `'${innerItem}'` : innerItem;
+  });
+
+  return `INSERT INTO question_pattern_1 (batch_no, semester, course_code, degree_code, dept_code, regulation_no, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11a, q11b, q12a, q12b, q13a, q13b, q14a, q14b, q15a, q15b) VALUES (${formattedValues.join(', ')})`;
+});
+
+formattedInsertQueries.forEach(async (insertQuery, index) => {
   try {
-    const registerNumbersResponse = await fetch('http://localhost:3002/api/registerNumbers');
-    const registerNumbers = await registerNumbersResponse.json();
-    for (const registerNumber of registerNumbers) {
-      const data = req.body;
-      const { column1, column2, column3, column4,column6,column7 } = data;
-      console.log('Data: ', data);
-      const query1 = {
-        text: 'INSERT INTO question_pattern_1 (batch_no, semester, course_code, degree_code, reg_no,dept_code,regulation_no) VALUES ($1, $2, $3, $4, $5,$6,$7)',
-        values: [column1, column2, column3, column4[0], registerNumber,column6[0],column7[0]],
-      };
-      const query2 = {
-        text: 'INSERT INTO iat_marks (batch_no, semester, course_code, degree_code, reg_no,dept_code,regulation_no) VALUES ($1, $2, $3, $4, $5,$6,$7)',
-        values: [column1, column2, column3, column4[0], registerNumber,column6[0],column7[0]],
-      };
-      const query3 = {
-        text: 'INSERT INTO co_level_marks (batch_no, semester, course_code, degree_code, reg_no,dept_code,regulation_no) VALUES ($1, $2, $3, $4, $5,$6,$7)',
-        values: [column1, column2, column3, column4[0], registerNumber,column6[0],column7[0]],
-      };
-      await Promise.all([
-        pool.query(query1),
-        pool.query(query2),
-        pool.query(query3),
-      ]);
-    }
-    console.log('Data inserted successfully into three tables');
-    res.status(200).json({ message: 'Data inserted successfully' });
+    const result = await pool.query(insertQuery); 
+    console.log(`Inserting row ${index + 1}: Success`);
+    console.log(result);
   } catch (error) {
-    console.error('Error inserting data into tables:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error(`Inserting row ${index + 1}: Error`);
+    console.error(error);
   }
 });
+    // Insert IAT marks
+    const iatMarksQuery = format(
+      'INSERT INTO iat_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no) VALUES %L',
+      [commonValues]
+    );
+    await client.query(iatMarksQuery);
+    console.log("iat query:", iatMarksQuery);
 
+    // Insert CO Level marks
+    const coLevelMarksQuery = format(
+      'INSERT INTO co_level_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no) VALUES %L',
+      [commonValues]
+    );
+    await client.query(coLevelMarksQuery);
+    console.log("colevel query: ", coLevelMarksQuery);
+
+    await client.query('COMMIT');
+    console.log('Data inserted successfully into question_pattern_1, iat_marks, and co_level_marks tables');
+    res.status(200).json({ message: 'Data inserted successfully' });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    client.release();
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on ${port}`);
