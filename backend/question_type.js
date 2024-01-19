@@ -154,38 +154,31 @@ app.post('/api/insertCombined', async (req, res) => {
     ];
 
     const partAData = Array.isArray(data.questionsPartAData.questionAnswers) ? data.questionsPartAData.questionAnswers : [];
-    const partBData = Array.isArray(data.partBData) ? data.partBData : [];
+const partBData = Array.isArray(data.partBData) ? data.partBData : [];
 
-    const combinedData = partAData.map((itemA, index) => {
-      const itemB = partBData[index] || { q: [] };
-      const partAValues = [...commonValues, ...itemA.q];
-      const partBValues = itemB.q.map(value => (value === undefined || value === null ? null : Number(value))); // Convert to number
-      return [...partAValues, ...partBValues];
-    });
+for (const registerNumber of registerNumbers) {
+  const itemA = partAData.shift() || { q: [] };
+  const itemB = partBData.shift() || { q: [] };
+  const partAValues = [...commonValues, ...itemA.q];
+  const partBValues = itemB.q.map(value => (value === undefined || value === null ? null : Number(value))); // Convert to number
 
-    const formattedInsertQueries = combinedData.map(item => {
-      const formattedValues = item.map(innerItem => {
-        return innerItem === undefined || innerItem === null ? 'NULL' : typeof innerItem === 'string' ? `'${innerItem}'` : innerItem;
-      });
+  const formattedValues = [...partAValues, ...partBValues, registerNumber];
+  const formattedInsertQuery = `INSERT INTO question_pattern_1 (batch_no, semester, course_code, degree_code, dept_code, regulation_no, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11a, q11b, q12a, q12b, q13a, q13b, q14a, q14b, q15a, q15b, reg_no) VALUES (${formattedValues.map(innerItem => innerItem === undefined || innerItem === null ? 'NULL' : typeof innerItem === 'string' ? `'${innerItem}'` : innerItem).join(', ')})`;
 
-      return `INSERT INTO question_pattern_1 (batch_no, semester, course_code, degree_code, dept_code, regulation_no, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11a, q11b, q12a, q12b, q13a, q13b, q14a, q14b, q15a, q15b) VALUES (${formattedValues.join(', ')})`;
-    });
+  try {
+    const result = await pool.query(formattedInsertQuery);
+    console.log(`Inserting row into question_pattern_1: Success`);
+    console.log(result);
+  } catch (error) {
+    console.error(`Inserting row into question_pattern_1: Error`);
+    console.error(error);
 
-    formattedInsertQueries.forEach(async (insertQuery, index) => {
-      try {
-        const result = await pool.query(insertQuery);
-        console.log(`Inserting row ${index + 1} into question_pattern_1: Success`);
-        console.log(result);
-      } catch (error) {
-        console.error(`Inserting row ${index + 1} into question_pattern_1: Error`);
-        console.error(error);
-
-        // Rollback the transaction on error
-        await client.query('ROLLBACK');
-        res.status(500).json({ error: 'Internal Server Error' });
-        return;
-      }
-    });
+    // Rollback the transaction on error
+    await client.query('ROLLBACK');
+    res.status(500).json({ error: 'Internal Server Error' });
+    return;
+  }
+}
 
     for (const registerNumber of registerNumbers) {
       // Insert into co_level_marks table
@@ -254,8 +247,6 @@ app.post('/api/insertCombined', async (req, res) => {
     client.release();
   }
 });
-
-
 
 app.listen(port, () => {
   console.log(`Server is running on ${port}`);
