@@ -96,7 +96,8 @@ export class HomeComponent implements OnInit {
           courseCode: this.selectedCourseCode,
           degreeCode: this.degreeCode,
           deptcode: this.deptcode,
-          regulation: this.regulation
+          regulation: this.regulation,
+          facultyId: this.facultyId
         };
 
         this.sharedDataService.setHomeComponentData(this.homeData);
@@ -112,10 +113,37 @@ export class HomeComponent implements OnInit {
   }
 
   onCourseCodeChange(courseCode: string) {
-    const courseCodes = [courseCode];
-    this.dataService.getCourse(courseCodes).subscribe((courseData: any[]) => {
+    this.selectedCourseCode = [courseCode];
+    this.dataService.getCourse(this.selectedCourseCode).subscribe((courseData: any[]) => {
       this.course = courseData[0];
+  
+      // Update shared data
+      this.homeData = {
+        batch: this.batch,
+        semester: this.selectedSemester,
+        courseCode: this.selectedCourseCode,
+        degreeCode: this.degreeCode,
+        deptcode: this.deptcode,
+        regulation: this.regulation,
+        facultyId: this.facultyId
+      };
+  
+      this.sharedDataService.setHomeComponentData(this.homeData);
     });
+  }
+  onSemesterChange() {
+    // Update shared data
+    this.homeData = {
+      batch: this.batch,
+      semester: this.selectedSemester,
+      courseCode: this.selectedCourseCode,
+      degreeCode: this.degreeCode,
+      deptcode: this.deptcode,
+      regulation: this.regulation,
+      facultyId: this.facultyId
+    };
+  
+    this.sharedDataService.setHomeComponentData(this.homeData);
   }
 
   redirectToQuestiontype() {
