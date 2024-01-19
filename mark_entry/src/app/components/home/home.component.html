@@ -17,7 +17,7 @@
           </ng-template>
         </ng-container>
         <ng-container *ngIf="input.placeholder === 'Semester'">
-          <select class="form-control input-box select-box" style="width: 60%; margin-right: 10px" [(ngModel)]="selectedSemester">
+          <select class="form-control input-box select-box" style="width: 60%; margin-right: 10px" [(ngModel)]="selectedSemester" (ngModelChange)="onSemesterChange()">
             <option *ngFor="let sem of semester" [value]="sem">{{ sem }}</option>
           </select>
         </ng-container>
