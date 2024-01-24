@@ -5,7 +5,6 @@ const bodyparser = require('body-parser');
 const format = require('pg-format');
 const axios =require('axios');
 
-
 const app = express();
 const port = 3002;
 
@@ -151,7 +150,8 @@ app.post('/api/insertCombined', async (req, res) => {
       data.homeData.degreeCode[0],
       data.homeData.deptcode[0].trim(),
       data.homeData.regulation[0].trim(),
-      data.homeData.facultyId
+      data.homeData.facultyId,
+      data.homeData.selectedAssessment
     ];
 
     const partAData = Array.isArray(data.questionsPartAData.questionAnswers) ? data.questionsPartAData.questionAnswers : [];
@@ -164,7 +164,7 @@ app.post('/api/insertCombined', async (req, res) => {
       const partBValues = itemB.q.map(value => (value === undefined || value === null ? null : Number(value))); // Convert to number
 
       const formattedValues = [...partAValues, ...partBValues, registerNumber];
-      const formattedInsertQuery = `INSERT INTO question_pattern_1 (batch_no, semester, course_code, degree_code, dept_code, regulation_no, faculty_id, q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11a, q11b, q12a, q12b, q13a, q13b, q14a, q14b, q15a, q15b, reg_no) VALUES (${formattedValues.map(innerItem => innerItem === undefined || innerItem === null ? 'NULL' : typeof innerItem === 'string' ? `'${innerItem}'` : innerItem).join(', ')})`;
+      const formattedInsertQuery = `INSERT INTO question_pattern_1 (batch_no, semester, course_code, degree_code, dept_code, regulation_no, faculty_id, test_type,q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11a, q11b, q12a, q12b, q13a, q13b, q14a, q14b, q15a, q15b, reg_no) VALUES (${formattedValues.map(innerItem => innerItem === undefined || innerItem === null ? 'NULL' : typeof innerItem === 'string' ? `'${innerItem}'` : innerItem).join(', ')})`;
 
       try {
         const result = await pool.query(formattedInsertQuery);
@@ -183,14 +183,15 @@ app.post('/api/insertCombined', async (req, res) => {
     for (const registerNumber of registerNumbers) {
       // Insert into co_level_marks table
       const coLevelMarksQuery = format(
-        'INSERT INTO co_level_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no, reg_no) VALUES (%L, %L, %L, %L, %L, %L, %L)',
+        'INSERT INTO co_level_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no, reg_no, test_type) VALUES (%L, %L, %L, %L, %L, %L, %L, %L)',
         commonValues[0], // batch_no
         commonValues[1], // semester
         commonValues[2], // course_code
         commonValues[3], // degree_code
         commonValues[4], // dept_code
         commonValues[5], // regulation_no
-        registerNumber
+        registerNumber,
+        commonValues[7]
       );
 
       try {
