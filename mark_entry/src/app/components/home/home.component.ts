@@ -16,16 +16,20 @@ export class HomeComponent implements OnInit {
   courseCodes: string[] = [];
   allBatchesEqual: boolean = false;
   deptcode: string | null = null;
-  department:string | null = null;
+  department: string | null = null;
   course: { course_title: string } = { course_title: '' };
   degreeCode: string | null = null;
-  selectedCourseCode: string[]=[];
-  semester: string[]=['1','2','3','4','5','6','7','8'];
-  selectedSemester:string | null = null;
-  regulation:string | null=null;
+  selectedCourseCode: string[] = [];
+  semester: string[] = ['1', '2', '3', '4', '5', '6', '7', '8'];
+  selectedSemester: string | null = null;
+  regulation: string | null = null;
 
   // New properties to store data
   homeData: any;
+  selectedAssessment: string | null = null;
+
+  // New property to track whether data is loaded
+  isDataLoaded: boolean = false;
 
   constructor(
     private router: Router,
@@ -97,10 +101,26 @@ export class HomeComponent implements OnInit {
           degreeCode: this.degreeCode,
           deptcode: this.deptcode,
           regulation: this.regulation,
-          facultyId: this.facultyId
+          facultyId: this.facultyId,
+          selectedAssessment: this.selectedAssessment,
         };
 
         this.sharedDataService.setHomeComponentData(this.homeData);
+
+        // Subscribe to selectedAssessment$ and update selectedAssessment
+        this.sharedDataService.getSelectedAssessment().subscribe((selectedAssessment: any) => {
+          this.selectedAssessment = selectedAssessment;
+          this.homeData = {
+            ...this.homeData,
+            selectedAssessment: selectedAssessment,
+          };
+
+          // Ensure that other properties are set before updating shared data
+          this.sharedDataService.setHomeComponentData(this.homeData);
+
+          // Additional check to mark data as loaded
+          this.isDataLoaded = true;
+        });
       });
     }
   }
@@ -125,12 +145,14 @@ export class HomeComponent implements OnInit {
         degreeCode: this.degreeCode,
         deptcode: this.deptcode,
         regulation: this.regulation,
-        facultyId: this.facultyId
+        facultyId: this.facultyId,
+        selectedAssessment: this.selectedAssessment,
       };
   
       this.sharedDataService.setHomeComponentData(this.homeData);
     });
   }
+
   onSemesterChange() {
     // Update shared data
     this.homeData = {
@@ -140,13 +162,25 @@ export class HomeComponent implements OnInit {
       degreeCode: this.degreeCode,
       deptcode: this.deptcode,
       regulation: this.regulation,
-      facultyId: this.facultyId
+      facultyId: this.facultyId,
+      selectedAssessment: this.selectedAssessment,
     };
   
     this.sharedDataService.setHomeComponentData(this.homeData);
   }
 
+  // Example method to check if data is loaded before proceeding
   redirectToQuestiontype() {
-    this.router.navigate(['/questions_part_A']);
+    if (this.isDataLoaded) {
+      this.router.navigate(['/questions_part_A']);
+    } else {
+      // Handle the case where data is not loaded yet
+      console.warn('Data is not loaded yet. Please wait.');
+    }
+  }
+
+  // Method to handle assessment selection
+  onAssessmentSelected(assessment: any) {
+    this.sharedDataService.setSelectedAssessment(assessment);
   }
 }
