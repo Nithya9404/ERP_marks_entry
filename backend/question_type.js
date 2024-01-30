@@ -162,12 +162,23 @@ app.post('/api/insertCombined', async (req, res) => {
       const itemB = partBData.shift() || { q: [] };
       const partAValues = [...commonValues, ...itemA.q];
       const partBValues = itemB.q.map(value => (value === undefined || value === null ? null : Number(value))); // Convert to number
+      
+      console.log('partAValues:', partAValues);
+      console.log('partBValues:', partBValues);
+      console.log('Assessment: ',data.homeData.selectedAssessment);
+      const sumAllValues = [
+        ...partAValues.slice(8, 18),  // q1 to q10 (partAValues)
+        ...partBValues    // q11a to q15b (partBValues)
+      ].reduce((acc, value) => acc + (value || 0), 0);
 
-      const formattedValues = [...partAValues, ...partBValues, registerNumber];
-      const formattedInsertQuery = `INSERT INTO question_pattern_1 (batch_no, semester, course_code, degree_code, dept_code, regulation_no, faculty_id, test_type,q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11a, q11b, q12a, q12b, q13a, q13b, q14a, q14b, q15a, q15b, reg_no) VALUES (${formattedValues.map(innerItem => innerItem === undefined || innerItem === null ? 'NULL' : typeof innerItem === 'string' ? `'${innerItem}'` : innerItem).join(', ')})`;
+      console.log('sumAllValues:', sumAllValues);
+      const formattedInsertQuery = format(
+        'INSERT INTO question_pattern_1 (batch_no, semester, course_code, degree_code, dept_code, regulation_no, faculty_id, test_type,q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11a, q11b, q12a, q12b, q13a, q13b, q14a, q14b, q15a, q15b, reg_no) VALUES (%L)',
+        [...partAValues, ...partBValues, registerNumber]
+      );
 
       try {
-        const result = await pool.query(formattedInsertQuery);
+        const result = await client.query(formattedInsertQuery);
         console.log(`Inserting row into question_pattern_1: Success`);
         console.log(result);
       } catch (error) {
@@ -179,19 +190,11 @@ app.post('/api/insertCombined', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
         return;
       }
-    }
-    for (const registerNumber of registerNumbers) {
+
       // Insert into co_level_marks table
       const coLevelMarksQuery = format(
-        'INSERT INTO co_level_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no, reg_no, test_type) VALUES (%L, %L, %L, %L, %L, %L, %L, %L)',
-        commonValues[0], // batch_no
-        commonValues[1], // semester
-        commonValues[2], // course_code
-        commonValues[3], // degree_code
-        commonValues[4], // dept_code
-        commonValues[5], // regulation_no
-        registerNumber,
-        commonValues[7]
+        'INSERT INTO co_level_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no, reg_no, test_type) VALUES (%L)',
+        [commonValues[0], commonValues[1], commonValues[2], commonValues[3], commonValues[4], commonValues[5], registerNumber, commonValues[7]]
       );
 
       try {
@@ -208,18 +211,13 @@ app.post('/api/insertCombined', async (req, res) => {
         return;
       }
 
-      // Insert into iat_marks table
+      // Insert into iat_marks table based on selectedAssessment
       const iatMarksQuery = format(
-        'INSERT INTO iat_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no, reg_no) VALUES (%L, %L, %L, %L, %L, %L, %L)',
-        commonValues[0], // batch_no
-        commonValues[1], // semester
-        commonValues[2], // course_code
-        commonValues[3], // degree_code
-        commonValues[4], // dept_code
-        commonValues[5], // regulation_no
-        registerNumber
+        'INSERT INTO iat_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no, reg_no, iat1, iat2) VALUES (%L)',
+        [commonValues[0], commonValues[1], commonValues[2], commonValues[3], commonValues[4], commonValues[5], registerNumber,
+          commonValues[7] === 'INTERNAL ASSESSMENT TEST1' ? sumAllValues : null,
+          commonValues[7] === 'INTERNAL ASSESSMENT TEST2' ? sumAllValues : null]
       );
-
       try {
         const result = await client.query(iatMarksQuery);
         console.log(`Inserting row into iat_marks: Success`);
@@ -236,7 +234,7 @@ app.post('/api/insertCombined', async (req, res) => {
     }
 
     await client.query('COMMIT');
-    console.log('Data inserted successfully into question_pattern_1');
+    console.log('Data inserted successfully into question_pattern_1, co_level_marks, and iat_marks');
     res.status(200).json({ message: 'Data inserted successfully' });
   } catch (error) {
     console.error('Error inserting data:', error);
@@ -248,6 +246,7 @@ app.post('/api/insertCombined', async (req, res) => {
     client.release();
   }
 });
+
 
 app.listen(port, () => {
   console.log(`Server is running on ${port}`);
