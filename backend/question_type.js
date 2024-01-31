@@ -167,8 +167,8 @@ app.post('/api/insertCombined', async (req, res) => {
       console.log('partBValues:', partBValues);
       console.log('Assessment: ',data.homeData.selectedAssessment);
       const sumAllValues = [
-        ...partAValues.slice(8, 18),  // q1 to q10 (partAValues)
-        ...partBValues    // q11a to q15b (partBValues)
+        ...partAValues.slice(8, 18),  
+        ...partBValues    
       ].reduce((acc, value) => acc + (value || 0), 0);
 
       console.log('sumAllValues:', sumAllValues);
@@ -190,13 +190,55 @@ app.post('/api/insertCombined', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
         return;
       }
-
-      // Insert into co_level_marks table
-      const coLevelMarksQuery = format(
-        'INSERT INTO co_level_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no, reg_no, test_type) VALUES (%L)',
-        [commonValues[0], commonValues[1], commonValues[2], commonValues[3], commonValues[4], commonValues[5], registerNumber, commonValues[7]]
-      );
-
+      const l1 = [
+        ...partAValues.slice(8, 12),  
+        ...partBValues.slice(0,4)
+      ].reduce((acc, value) => acc + (value || 0), 0);
+      const l2 = [
+        ...partAValues.slice(12, 16),  
+        ...partBValues.slice(4,8)    
+      ].reduce((acc, value) => acc + (value || 0), 0);
+      const l3 = [
+        ...partAValues.slice(16, 18),  
+        ...partBValues.slice(8,10)  
+      ].reduce((acc, value) => acc + (value || 0), 0);
+      const l4 = [
+        ...partAValues.slice(8, 10),  
+        ...partBValues.slice(0,2)  
+      ].reduce((acc, value) => acc + (value || 0), 0);
+      const l5 = [
+        ...partAValues.slice(10, 14),  
+        ...partBValues.slice(2,6)   
+      ].reduce((acc, value) => acc + (value || 0), 0);
+      const l6 = [
+        ...partAValues.slice(14, 18),  
+        ...partBValues.slice(6,10)    
+      ].reduce((acc, value) => acc + (value || 0), 0);
+    console.log('l1: ',l1);
+    console.log('l2: ',l2);
+    console.log('l3: ',l3);
+    console.log('l4: ',l4);
+    console.log('l5: ',l5);
+    console.log('l6: ',l6);
+    const coLevelMarksQuery = format(
+  'INSERT INTO co_level_marks (batch_no, semester, course_code, degree_code, dept_code, regulation_no, reg_no, test_type, l1, l2, l3, l4, l5, l6) VALUES (%L)',
+  [
+    commonValues[0], // batch_no
+    commonValues[1], // semester
+    commonValues[2], // course_code
+    commonValues[3], // degree_code
+    commonValues[4], // dept_code
+    commonValues[5], // regulation_no
+    registerNumber, // reg_no
+    commonValues[7], // test_type
+    commonValues[7] === 'INTERNAL ASSESSMENT TEST1' ? l1 : null,
+    commonValues[7] === 'INTERNAL ASSESSMENT TEST1' ? l2 : null,
+    commonValues[7] === 'INTERNAL ASSESSMENT TEST1' ? l3 : null,
+    commonValues[7] === 'INTERNAL ASSESSMENT TEST2' ? l4 : null,
+    commonValues[7] === 'INTERNAL ASSESSMENT TEST2' ? l5 : null,
+    commonValues[7] === 'INTERNAL ASSESSMENT TEST2' ? l6 : null,
+  ]
+);
       try {
         const result = await client.query(coLevelMarksQuery);
         console.log(`Inserting row into co_level_marks: Success`);
