@@ -60,6 +60,8 @@ export class QuestionsPartBComponent implements OnInit {
 
     // Call the single function to send data to all three APIs
     this.sendInsertCombinedData(postData);
+    const alertMessage = 'Data inserted successfully!'; // Change this message as needed
+    window.alert(alertMessage);
   }
 
   sendInsertCombinedData(data: { q: number[] }[]) {
