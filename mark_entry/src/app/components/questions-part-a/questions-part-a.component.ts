@@ -67,6 +67,8 @@ export class QuestionsPartAComponent implements OnInit {
     this.sharedDataService.setQuestionsPartAComponentData({
       questionAnswers: postData,
     });
+    const alertMessage = 'Data inserted successfully!'; // Change this message as needed
+    window.alert(alertMessage);
 
     // Optionally, navigate to the next page
     this.router.navigate(['/questions_part_B']);
